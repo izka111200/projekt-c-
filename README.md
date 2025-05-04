@@ -1,1 +1,1 @@
-# Projekt_jpo c++
+# Projekt_jpo

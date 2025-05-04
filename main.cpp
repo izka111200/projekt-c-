@@ -1,45 +1,57 @@
-#include <QApplication> // Biblioteka do tworzenia aplikacji Qt
-#include <QQmlApplicationEngine> // Biblioteka do obsługi QML
-#include <QQmlContext> // Biblioteka do przekazywania danych do QML
-#include "mainwindow.h" // Plik nagłówkowy dla klasy MainWindow
+#include <QApplication>        ///< Biblioteka do tworzenia aplikacji Qt.
+#include <QQmlApplicationEngine> ///< Biblioteka do obsługi silnika QML.
+#include <QQmlContext>         ///< Biblioteka do przekazywania danych do QML.
+#include "mainwindow.h"        ///< Plik nagłówkowy dla klasy MainWindow.
 
+/**
+ * @file main.cpp
+ * @brief Główny plik programu, inicjalizujący aplikację Qt i ładujący interfejs QML.
+ */
+
+/**
+ * @brief Funkcja główna programu.
+ * @param argc Liczba argumentów linii poleceń.
+ * @param argv Tablica argumentów linii poleceń.
+ * @return Kod wyjścia programu (0 oznacza sukces).
+ */
 int main(int argc, char *argv[])
 {
-    // Tworzenie głównego obiektu aplikacji Qt
+    /// Tworzy obiekt aplikacji Qt z argumentami linii poleceń.
     QApplication app(argc, argv);
 
-    // Ustawianie nazwy organizacji
+    /// Ustawia nazwę organizacji dla aplikacji.
     app.setOrganizationName("JPOGIOS");
-    // Ustawianie domeny organizacji
+    /// Ustawia domenę organizacji dla ustawień aplikacji.
     app.setOrganizationDomain("jpo.example.com");
-    // Ustawianie nazwy aplikacji
+    /// Ustawia nazwę aplikacji.
     app.setApplicationName("MonitorJakosciPowietrza");
 
-    // Tworzenie silnika do obsługi QML
+    /// Tworzy silnik do obsługi plików QML.
     QQmlApplicationEngine engine;
-    // Tworzenie obiektu głównego okna
+
+    /// Tworzy obiekt MainWindow do zarządzania logiką aplikacji.
     MainWindow mainWindow;
 
-    // Przekazywanie obiektu mainWindow do QML, aby umożliwić jego używanie
+    /// Przekazuje obiekt MainWindow do kontekstu QML jako "mainWindow".
     engine.rootContext()->setContextProperty("mainWindow", &mainWindow);
 
-    // Określanie adresu pliku QML do załadowania
+    /// Definiuje adres głównego pliku QML z zasobów qrc.
     const QUrl url(QStringLiteral("qrc:/main.qml"));
 
-    // Sprawdzanie, czy QML został poprawnie załadowany; w razie błędu kończenie programu
+    /// Sprawdza, czy QML został załadowany; jeśli nie, kończy program.
     QObject::connect(&engine, &QQmlApplicationEngine::objectCreated,
                      &app, [url](QObject *obj, const QUrl &objUrl) {
                          if (!obj && url == objUrl)
                              QCoreApplication::exit(-1);
                      }, Qt::QueuedConnection);
 
-    // Ładowanie pliku QML
+    /// Ładuje główny plik QML.
     engine.load(url);
 
-    // Sprawdzanie, czy QML utworzył obiekty; w razie braku kończenie programu
+    /// Kończy program, jeśli QML nie utworzył żadnych obiektów.
     if (engine.rootObjects().isEmpty())
         return -1;
 
-    // Uruchamianie aplikacji i oczekiwanie na interakcje użytkownika
+    /// Uruchamia pętlę zdarzeń aplikacji Qt.
     return app.exec();
 }
